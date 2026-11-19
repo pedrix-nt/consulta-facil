@@ -1,0 +1,2 @@
+-- Estrutura inicial do banco de dados ConsultaFácil.
+-- As tabelas serão definidas durante a etapa de implementação.
