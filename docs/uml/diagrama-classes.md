@@ -1,6 +1,5 @@
 classDiagram
-class s1
-class s2
+
 class Pessoa {
     -String nome
     -int idade
