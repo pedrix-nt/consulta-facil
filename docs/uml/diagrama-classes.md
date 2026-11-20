@@ -1,81 +1,109 @@
 classDiagram
+
     class Pessoa {
-        -nome: str
-        -idade: int
-        -altura: float
-        +__init__()
+        -String nome
+        -int idade
+        -double altura
+        +Pessoa(nome, idade, altura)
+        +getNome()
+        +getIdade()
+        +getAltura()
         +seApresentar()
     }
 
     class Paciente {
-        -cpf: str
-        -telefone: str
-        -endereco: str
-        +__init__()
-        +seApresentar()
+        -LocalDate dataNascimento
+        -String cpf
+        -String sexo
+        -String nomeMae
+        -String telefone
+        -String email
+        -String endereco
+        +Paciente()
         +atualizarCadastro()
+        +consultarHistorico()
+        +realizarTriagem()
     }
 
     class ProfissionalSaude {
-        -registro: str
-        -cargo: str
-        +__init__()
-        +seApresentar()
+        -String cpf
+        -LocalDate dataNascimento
+        -String sexo
+        -String registro
+        -String cargo
+        -String telefone
+        -String email
+        -String endereco
+        +ProfissionalSaude()
         +consultarAgenda()
+        +listarEspecialidades()
     }
 
     class Administrador {
-        -matricula: str
-        +__init__()
-        +seApresentar()
+        -String cpf
+        -LocalDate dataNascimento
+        -String sexo
+        -String telefone
+        -String email
+        -String matricula
+        +Administrador()
         +gerenciarSistema()
+        +gerenciarProfissionais()
+        +gerenciarVagas()
     }
 
     class SistemaCadastro {
-        -pessoas: list
+        -List~Pessoa~ pessoas
         +cadastrarPessoa()
         +listarPessoas()
         +buscarPessoa()
+        +atualizarPessoa()
+        +excluirPessoa()
     }
 
     class Triagem {
-        -data: str
-        -respostas: list
-        -observacoes: str
+        -int id
+        -LocalDate data
+        -List~String~ respostas
+        -String observacoes
         +registrarRespostas()
         +consultarTriagem()
     }
 
     class Especialidade {
-        -id: int
-        -nome: str
-        -descricao: str
+        -int id
+        -String nome
+        -String descricao
         +listarProfissionais()
     }
 
     class UnidadeSaude {
-        -id: int
-        -nome: str
-        -endereco: str
+        -int id
+        -String nome
+        -String endereco
+        -String telefone
+        +adicionarProfissional()
         +listarProfissionais()
         +consultarVagas()
     }
 
     class HorarioDisponivel {
-        -data: str
-        -horario: str
-        -vagasComuns: int
-        -vagasPreferenciais: int
+        -int id
+        -LocalDate data
+        -LocalTime horario
+        -int vagasComuns
+        -int vagasPreferenciais
         +consultarDisponibilidade()
-        +atualizarVagas()
+        +reservarVaga()
+        +liberarVaga()
     }
 
     class Agendamento {
-        -id: int
-        -data: str
-        -horario: str
-        -tipoVaga: str
-        -status: str
+        -int id
+        -LocalDate data
+        -LocalTime horario
+        -String tipoVaga
+        -String status
         +confirmar()
         +cancelar()
         +consultarAgendamento()
@@ -86,11 +114,18 @@ classDiagram
     Pessoa <|-- Administrador
 
     SistemaCadastro o-- Pessoa
-    Paciente "1" --> "0..*" Triagem
-    Paciente "1" --> "0..*" Agendamento
-    ProfissionalSaude "1" --> "0..*" Agendamento
-    ProfissionalSaude "*" --> "1" Especialidade
-    UnidadeSaude "1" --> "0..*" ProfissionalSaude
-    UnidadeSaude "1" --> "0..*" HorarioDisponivel
-    HorarioDisponivel "1" --> "0..*" Agendamento
-    Agendamento "*" --> "1" Especialidade
+
+    Paciente "1" --> "0..*" Triagem : realiza
+    Paciente "1" --> "0..*" Agendamento : solicita
+
+    ProfissionalSaude "1" --> "0..*" Agendamento : atende
+    ProfissionalSaude "*" --> "1..*" Especialidade : possui
+
+    UnidadeSaude "1" o-- "0..*" ProfissionalSaude : possui
+    UnidadeSaude "1" o-- "0..*" HorarioDisponivel : disponibiliza
+
+    HorarioDisponivel "1" --> "0..*" Agendamento : recebe
+    Agendamento "*" --> "1" Especialidade : corresponde a
+    Agendamento "*" --> "1" UnidadeSaude : acontece em
+
+    Administrador ..> SistemaCadastro : gerencia
